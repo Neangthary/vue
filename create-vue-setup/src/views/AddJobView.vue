@@ -1,5 +1,7 @@
 <script setup>
+import router from '@/router';
 import { reactive } from 'vue';
+import axios from 'axios';
 
 
 const form = reactive({
@@ -17,8 +19,29 @@ const form = reactive({
 });
 
 const handleSubmit = async () => {
-    console.log(form.title);
-}
+    const newJob = {
+        title: form.title,
+        type: form.type,
+        location: form.location,
+        description: form.description,
+        salary: form.salary,
+        company: {
+            name: form.company.name,
+            description: form.company.description,
+            contactEmail: form.company.contactEmail,
+            contactPhone: form.company.contactPhone,
+        },
+    };
+    try {
+        const response = await axios.post('/api/jobs', newJob);
+        // @todo - show toast
+        router.push(`/jobs/${response.data.id}`);
+    } catch (error) {
+        console.error('Error fetching job', error);
+        // @todo - show toast
+
+    }
+};
 
 </script>
 
@@ -75,16 +98,16 @@ const handleSubmit = async () => {
                         <label class="block text-gray-700 font-bold mb-2">
                             Location
                         </label>
-                        <input type="text" v-model="form.location" id="location" name="location" class="border rounded w-full py-2 px-3 mb-2"
-                            placeholder="Company Location" required />
+                        <input type="text" v-model="form.location" id="location" name="location"
+                            class="border rounded w-full py-2 px-3 mb-2" placeholder="Company Location" required />
                     </div>
 
                     <h3 class="text-2xl mb-5">Company Info</h3>
 
                     <div class="mb-4">
                         <label for="company" class="block text-gray-700 font-bold mb-2">Company Name</label>
-                        <input type="text" v-model="form.company.name" id="company" name="company" class="border rounded w-full py-2 px-3"
-                            placeholder="Company Name" />
+                        <input type="text" v-model="form.company.name" id="company" name="company"
+                            class="border rounded w-full py-2 px-3" placeholder="Company Name" />
                     </div>
 
                     <div class="mb-4">
